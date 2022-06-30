@@ -17,7 +17,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
 
     private Context mContext;
     private ArrayList<People> listPeople;
-    private List<Integer> listIndex;
+    private List<Integer> listId;
     private MainActivity.Listener mListener;
     public PeopleAdapter(Context context, MainActivity.Listener listener) {
         mContext = context;
@@ -26,7 +26,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
 
     public void setData(ArrayList<People> listPeople, List<Integer> listIndex) {
         this.listPeople = listPeople;
-        this.listIndex = listIndex;
+        this.listId = listIndex;
     }
 
     @NonNull
@@ -46,10 +46,13 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
         holder.cbFavorite.setOnClickListener(v->{
             mListener.onClickItem(v, position);
         });
-        People people = getPeople(listIndex.get(position));
-        holder.tvName.setText(people.name);
-        holder.cbFavorite.setChecked(people.isFavorite);
-        holder.tvIndex.setText(String.valueOf(people.id));
+        People people = getPeople(listId.get(position));
+        if (people != null) {
+            holder.tvName.setText(people.name);
+            holder.cbFavorite.setChecked(people.isFavorite);
+            holder.tvIndex.setText(String.valueOf(people.id));
+        }
+
     }
 
     private People getPeople(int id) {
@@ -63,7 +66,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
 
     @Override
     public int getItemCount() {
-        return listIndex.size();
+        return listId.size();
     }
 
     static class PeopleViewHolder extends RecyclerView.ViewHolder {

@@ -5,26 +5,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.function.Predicate;
 
 public class MainActivity extends AppCompatActivity{
 
     private PeopleAdapter mAdapter;
     private RecyclerView mRecycleView;
     ArrayList<People> listPeople = new ArrayList<>();
-    List<Integer> listIndex = new ArrayList<>();
+    List<Integer> listPageId = new ArrayList<>();
     DefaultItemAnimator defaultItemAnimator;
 
 
@@ -49,16 +48,17 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onLongClickItem(View view, int pos) {
-                listPeople.remove(pos);
-                filterAll();
+                int id = listPageId.get(pos);
+                listPageId.remove(pos);
+                listPeople.removeIf(people -> people.id == id);
                 mAdapter.notifyItemRemoved(pos);
             }
         });
-        mAdapter.setData(listPeople, listIndex);
+        mAdapter.setData(listPeople, listPageId);
         mRecycleView.setAdapter(mAdapter);
         mRecycleView.setLayoutManager(new GridLayoutManager(this, 3));
         defaultItemAnimator = new DefaultItemAnimator();
-        mRecycleView.setItemAnimator(defaultItemAnimator);
+//        mRecycleView.setItemAnimator(defaultItemAnimator);
     }
 
     void generatePeople(ArrayList<People> listPeople) {
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity{
         for(int id = 0; id < 20; id++) {
             String sName = "";
             sName = name[id%14] + String.valueOf(name[(id+1)%14]) + name[(id+2)%14];
-            listIndex.add(id);
+            listPageId.add(id);
             listPeople.add(new People(id, sName, false));
         }
     }
@@ -77,41 +77,55 @@ public class MainActivity extends AppCompatActivity{
         return true;
     }
 
+    @SuppressLint({"NonConstantResourceId", "UseCompatLoadingForDrawables"})
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.show_all:
-                Toast.makeText(this, "Show all", Toast.LENGTH_SHORT).show();
-                filterAll();
-                mAdapter.notifyDataSetChanged();
-                return true;
             case R.id.book_mark:
                 Toast.makeText(this, "Book mark", Toast.LENGTH_SHORT).show();
-                filterBookMark();
-                mAdapter.notifyDataSetChanged();
+                if (!item.isChecked()) {
+                    item.setChecked(true);
+                    item.setIcon(getResources().getDrawable( R.drawable.ic_baseline_star_24 , null));
+                    filterBookMark();
+                } else {
+                    item.setChecked(false);
+                    item.setIcon(getResources().getDrawable( R.drawable.ic_baseline_star_border_24 , null));
+                    filterAll();
+                }
                 return true;
             default:
         }
         return false;
     }
 
-    List<Integer> unBookMark = new ArrayList<>();
-
     private void filterBookMark() {
-        listIndex.clear();
-        for(People people: listPeople) {
-            if (people.isFavorite) {
-                listIndex.add(people.id);
-            } else {
-                unBookMark.add(listPeople.indexOf(people));
-            }
+        List<Integer> unBookmarkIndex = new ArrayList<>();
+        mapListPageUnBookMark(unBookmarkIndex);
+
+        for (int i = unBookmarkIndex.size() -1; i >= 0; i--) {
+            int index = unBookmarkIndex.get(i);
+            listPageId.remove(index);
+            mAdapter.notifyItemRemoved(index);
         }
     }
 
     private void filterAll() {
-        listIndex.clear();
-        for(People people: listPeople) {
-            listIndex.add(people.id);
+        List<Integer> unBookmarkIndex = new ArrayList<>();
+        mapListPageUnBookMark(unBookmarkIndex);
+
+        for(int i = 0; i < unBookmarkIndex.size(); i++) {
+            int index = unBookmarkIndex.get(i);
+            listPageId.add(index, listPeople.get(index).id);
+            mAdapter.notifyItemInserted(index);
+        }
+    }
+
+    void mapListPageUnBookMark(List<Integer> listIndexUnBookMark) {
+        listIndexUnBookMark.clear();
+        for (People people: listPeople) {
+            if (!people.isFavorite) {
+                listIndexUnBookMark.add(listPeople.indexOf(people));
+            }
         }
     }
 

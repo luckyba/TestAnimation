@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/book_mark"
         android:title="BookMark"
+        android:icon="@drawable/ic_baseline_star_border_24"
         app:showAsAction="always"/>
-    <item android:id="@+id/show_all"
-        android:title="Show all"
-        app:showAsAction="always"/>
+
 </menu>
