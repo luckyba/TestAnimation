@@ -48,6 +48,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
         });
         People people = getPeople(listId.get(position));
         if (people != null) {
+            holder.index = position;
             holder.tvName.setText(people.name);
             holder.cbFavorite.setChecked(people.isFavorite);
             holder.tvIndex.setText(String.valueOf(people.id));
@@ -69,10 +70,21 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
         return listId.size();
     }
 
+    @Override
+    public void onViewRecycled(@NonNull PeopleViewHolder holder) {
+        super.onViewRecycled(holder);
+    }
+
+    @Override
+    public boolean onFailedToRecycleView(@NonNull PeopleViewHolder holder) {
+        return super.onFailedToRecycleView(holder);
+    }
+
     static class PeopleViewHolder extends RecyclerView.ViewHolder {
         CheckBox cbFavorite;
         TextView tvName;
         TextView tvIndex;
+        int index;
         public PeopleViewHolder(@NonNull View itemView) {
             super(itemView);
             cbFavorite = itemView.findViewById(R.id.cb_favarite);

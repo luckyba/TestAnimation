@@ -21,19 +21,19 @@ public class TranslationXY {
         animX.setDuration(duration);
         animY.setDuration(duration);
 
-//        animX.addUpdateListener(updatedAnimation -> {
-//            float value = (float) updatedAnimation.getAnimatedValue();
-//            Log.d("translate_", "animX "+ value);
-//
-//            view.setTranslationX(value);
-//        });
-//
-//        animY.addUpdateListener(updatedAnimation -> {
-//            float value = (float) updatedAnimation.getAnimatedValue();
-//            Log.d("translate_", "animY "+ value);
-//
-//            view.setTranslationY(value);
-//        });
+        animX.addUpdateListener(updatedAnimation -> {
+            float value = (float) updatedAnimation.getAnimatedValue();
+            Log.d("translate_", "animX "+ value);
+
+            view.setTranslationX(value);
+        });
+
+        animY.addUpdateListener(updatedAnimation -> {
+            float value = (float) updatedAnimation.getAnimatedValue();
+            Log.d("translate_", "animY "+ value);
+
+            view.setTranslationY(value);
+        });
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animX, animY);
         animatorSet.start();

@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity{
         mRecycleView = findViewById(R.id.list_people);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mRecycleView.setHasFixedSize(true);
+//        mRecycleView.setHasFixedSize(true);
 
         generatePeople(listPeople);
         mAdapter = new PeopleAdapter(this, new Listener() {
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity{
         });
         mAdapter.setData(listPeople, listPageId);
         mRecycleView.setAdapter(mAdapter);
-        mRecycleView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecycleView.setLayoutManager(new CustomGridLayoutManager(this, 3));
         defaultItemAnimator = new DefaultItemAnimator();
 //        mRecycleView.setItemAnimator(defaultItemAnimator);
     }
